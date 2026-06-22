@@ -1,6 +1,4 @@
-
-# إنشاء server.js محدث لـ Railway مع خدمة الملفات الثابتة
-server_v2 = '''/**
+/**
  * ╔═══════════════════════════════════════════════════════════════════════════╗
  * ║                    Yasmin Hub - Production Server                        ║
  * ║         خادم الإنتاج مع خدمة الملفات الثابتة وبوابات الدفع              ║
@@ -394,8 +392,3 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
-'''
-
-with open('/mnt/agents/output/server.js', 'w', encoding='utf-8') as f:
-    f.write(server_v2)
-
