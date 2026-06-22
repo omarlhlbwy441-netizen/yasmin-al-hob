@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+
+# إنشاء صفحة تسجيل الدخول المصلحة مع نظام مصادقة حقيقي
+login_fixed = '''<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -6,83 +8,74 @@
     <title>ياسمين - تسجيل الدخول</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        tajawal: ['Tajawal', 'sans-serif'],
-                    },
-                    colors: {
-                        yasmin: {
-                            primary: '#7C3AED',    // بنفسجي غامق
-                            secondary: '#EC4899',   // وردي
-                            accent: '#8B5CF6',      // بنفسجي فاتح
-                            dark: '#1E1B4B',        // كحلي غامق
-                            surface: '#0F0A1E',     // خلفية داكنة
-                        }
-                    },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
-                        },
-                        glow: {
-                            '0%': { boxShadow: '0 0 5px rgba(124, 58, 237, 0.5)' },
-                            '100%': { boxShadow: '0 0 20px rgba(124, 58, 237, 0.8), 0 0 40px rgba(236, 72, 153, 0.4)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         body {
             font-family: 'Tajawal', sans-serif;
             background: #0F0A1E;
             overflow-x: hidden;
         }
-
         .glass-panel {
             background: rgba(30, 27, 75, 0.4);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(124, 58, 237, 0.2);
         }
-
         .gradient-text {
             background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .input-field {
             background: rgba(15, 10, 30, 0.6);
             border: 1px solid rgba(124, 58, 237, 0.3);
             transition: all 0.3s ease;
         }
-
         .input-field:focus {
             border-color: #7C3AED;
             box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
             outline: none;
         }
-
+        .input-field.error {
+            border-color: #EF4444;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+        }
         .btn-primary {
             background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
             transition: all 0.3s ease;
         }
-
-        .btn-primary:hover {
+        .btn-primary:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
         }
-
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .social-btn {
+            background: rgba(30, 27, 75, 0.6);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            transition: all 0.3s ease;
+        }
+        .social-btn:hover {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: #7C3AED;
+            transform: translateY(-2px);
+        }
+        .toast {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
         .particle {
             position: absolute;
             border-radius: 50%;
@@ -90,37 +83,50 @@
             opacity: 0.3;
             animation: float 8s ease-in-out infinite;
         }
-
-        .social-btn {
-            background: rgba(30, 27, 75, 0.6);
-            border: 1px solid rgba(124, 58, 237, 0.2);
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        /* Tab system */
+        .tab-btn {
+            position: relative;
             transition: all 0.3s ease;
         }
-
-        .social-btn:hover {
-            background: rgba(124, 58, 237, 0.2);
-            border-color: #7C3AED;
-            transform: translateY(-2px);
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #7C3AED, #EC4899);
+        }
+        .tab-btn.active {
+            color: white;
         }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center relative">
 
+    <!-- خلفية متحركة -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
         <div class="particle w-64 h-64 top-10 right-10 blur-3xl"></div>
         <div class="particle w-96 h-96 bottom-20 left-20 blur-3xl" style="animation-delay: 2s;"></div>
         <div class="particle w-48 h-48 top-1/2 left-1/2 blur-2xl" style="animation-delay: 4s;"></div>
     </div>
-
     <div class="fixed inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, rgba(124, 58, 237, 0.3) 1px, transparent 0); background-size: 40px 40px;"></div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-4 left-4 z-50 space-y-2"></div>
 
     <div class="container mx-auto px-4 relative z-10">
         <div class="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-12">
 
+            <!-- الجانب الأيسر: العلامة التجارية -->
             <div class="lg:w-1/2 text-center lg:text-right">
                 <div class="mb-8">
                     <div class="inline-flex items-center gap-3 mb-6">
-                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yasmin-primary to-yasmin-secondary flex items-center justify-center animate-glow">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
                             <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                             </svg>
@@ -134,24 +140,24 @@
 
                 <div class="space-y-4">
                     <div class="flex items-center gap-3 text-gray-300">
-                        <div class="w-8 h-8 rounded-lg bg-yasmin-primary/20 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-yasmin-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                         <span>وكلاء ذكاء اصطناعي متوازيين</span>
                     </div>
                     <div class="flex items-center gap-3 text-gray-300">
-                        <div class="w-8 h-8 rounded-lg bg-yasmin-secondary/20 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-yasmin-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-8 h-8 rounded-lg bg-pink-500/20 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                             </svg>
                         </div>
                         <span>بناء سريع بدون برمجة معقدة</span>
                     </div>
                     <div class="flex items-center gap-3 text-gray-300">
-                        <div class="w-8 h-8 rounded-lg bg-yasmin-accent/20 flex items-center justify-center">
-                            <svg class="w-4 h-4 text-yasmin-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center">
+                            <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
                             </svg>
                         </div>
@@ -160,73 +166,186 @@
                 </div>
             </div>
 
+            <!-- الجانب الأيمن: نموذج تسجيل الدخول / التسجيل -->
             <div class="lg:w-1/2 w-full">
                 <div class="glass-panel rounded-3xl p-8 md:p-10 shadow-2xl">
-                    <div class="text-center mb-8">
-                        <h2 class="text-2xl font-bold text-white mb-2">مرحباً بعودتك</h2>
-                        <p class="text-gray-400">سجل الدخول إلى حسابك في ياسمين</p>
+
+                    <!-- Tabs -->
+                    <div class="flex border-b border-gray-700 mb-8">
+                        <button id="tabLogin" onclick="switchTab('login')" class="tab-btn active flex-1 pb-4 text-center text-gray-400 hover:text-white transition">
+                            تسجيل الدخول
+                        </button>
+                        <button id="tabRegister" onclick="switchTab('register')" class="tab-btn flex-1 pb-4 text-center text-gray-400 hover:text-white transition">
+                            حساب جديد
+                        </button>
                     </div>
 
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- نموذج تسجيل الدخول -->
+                    <!-- ═══════════════════════════════════════════ -->
                     <form id="loginForm" class="space-y-5">
                         <div>
                             <label class="block text-gray-300 text-sm font-medium mb-2">البريد الإلكتروني</label>
                             <div class="relative">
-                                <input 
-                                    type="email" 
-                                    id="email"
-                                    class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right"
-                                    placeholder="أدخل بريدك الإلكتروني"
+                                <input
+                                    type="email"
+                                    id="loginEmail"
+                                    class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right pr-12"
+                                    placeholder="example@email.com"
                                     required
+                                    autocomplete="email"
                                 >
-                                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
                                 </svg>
                             </div>
+                            <p id="loginEmailError" class="text-red-400 text-xs mt-1 hidden"></p>
                         </div>
 
                         <div>
                             <label class="block text-gray-300 text-sm font-medium mb-2">كلمة المرور</label>
                             <div class="relative">
-                                <input 
-                                    type="password" 
-                                    id="password"
-                                    class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right"
-                                    placeholder="أدخل كلمة المرور"
+                                <input
+                                    type="password"
+                                    id="loginPassword"
+                                    class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right pr-12"
+                                    placeholder="••••••••"
                                     required
+                                    autocomplete="current-password"
                                 >
-                                <button type="button" onclick="togglePassword()" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300 transition">
-                                    <svg id="eyeIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                <button type="button" onclick="togglePassword('loginPassword', 'loginEye')" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300 transition">
+                                    <svg id="loginEye" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                     </svg>
                                 </button>
                             </div>
+                            <p id="loginPasswordError" class="text-red-400 text-xs mt-1 hidden"></p>
                         </div>
 
                         <div class="flex items-center justify-between">
                             <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" class="w-4 h-4 rounded border-gray-600 text-yasmin-primary focus:ring-yasmin-primary bg-transparent">
+                                <input type="checkbox" id="rememberMe" class="w-4 h-4 rounded border-gray-600 text-purple-600 focus:ring-purple-600 bg-transparent">
                                 <span class="text-gray-400 text-sm">تذكرني</span>
                             </label>
-                            <a href="#" class="text-yasmin-primary hover:text-yasmin-secondary text-sm transition">نسيت كلمة المرور؟</a>
+                            <a href="#" onclick="showForgotPassword()" class="text-purple-400 hover:text-pink-400 text-sm transition">نسيت كلمة المرور؟</a>
                         </div>
 
-                        <button type="submit" class="btn-primary w-full py-3.5 rounded-xl text-white font-bold text-lg shadow-lg">
-                            تسجيل الدخول
+                        <button type="submit" id="loginBtn" class="btn-primary w-full py-3.5 rounded-xl text-white font-bold text-lg shadow-lg flex items-center justify-center gap-2">
+                            <span id="loginBtnText">تسجيل الدخول</span>
+                            <svg id="loginSpinner" class="hidden animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
                         </button>
                     </form>
 
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- نموذج التسجيل (مخفي افتراضياً) -->
+                    <!-- ═══════════════════════════════════════════ -->
+                    <form id="registerForm" class="space-y-5 hidden">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-300 text-sm font-medium mb-2">الاسم الأول</label>
+                                <input type="text" id="regFirstName" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right" placeholder="أحمد" required>
+                                <p id="regFirstNameError" class="text-red-400 text-xs mt-1 hidden"></p>
+                            </div>
+                            <div>
+                                <label class="block text-gray-300 text-sm font-medium mb-2">الاسم الأخير</label>
+                                <input type="text" id="regLastName" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right" placeholder="محمد" required>
+                                <p id="regLastNameError" class="text-red-400 text-xs mt-1 hidden"></p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-2">البريد الإلكتروني</label>
+                            <div class="relative">
+                                <input type="email" id="regEmail" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right pr-12" placeholder="example@email.com" required>
+                                <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+                                </svg>
+                            </div>
+                            <p id="regEmailError" class="text-red-400 text-xs mt-1 hidden"></p>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-2">رقم الهاتف</label>
+                            <div class="relative">
+                                <input type="tel" id="regPhone" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right pr-12" placeholder="01XXXXXXXX" required maxlength="11">
+                                <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                </svg>
+                            </div>
+                            <p id="regPhoneError" class="text-red-400 text-xs mt-1 hidden"></p>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-2">الرقم القومي</label>
+                            <div class="relative">
+                                <input type="text" id="regNationalId" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right pr-12" placeholder="2XXXXXXXXXXXXXX" required maxlength="14">
+                                <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
+                                </svg>
+                            </div>
+                            <p id="regNationalIdError" class="text-red-400 text-xs mt-1 hidden"></p>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-2">كلمة المرور</label>
+                            <div class="relative">
+                                <input type="password" id="regPassword" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right pr-12" placeholder="••••••••" required minlength="6">
+                                <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                                </svg>
+                                <button type="button" onclick="togglePassword('regPassword', 'regEye')" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-300 transition">
+                                    <svg id="regEye" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p id="regPasswordError" class="text-red-400 text-xs mt-1 hidden"></p>
+                            <p class="text-gray-500 text-xs mt-1">6 أحرف على الأقل</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-300 text-sm font-medium mb-2">تأكيد كلمة المرور</label>
+                            <input type="password" id="regConfirmPassword" class="input-field w-full px-4 py-3 rounded-xl text-white placeholder-gray-500 text-right" placeholder="••••••••" required>
+                            <p id="regConfirmPasswordError" class="text-red-400 text-xs mt-1 hidden"></p>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="agreeTerms" class="w-4 h-4 rounded border-gray-600 text-purple-600 focus:ring-purple-600 bg-transparent" required>
+                            <label for="agreeTerms" class="text-gray-400 text-sm">
+                                أوافق على <a href="#" class="text-purple-400 hover:text-pink-400">شروط الاستخدام</a> و <a href="#" class="text-purple-400 hover:text-pink-400">سياسة الخصوصية</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" id="registerBtn" class="btn-primary w-full py-3.5 rounded-xl text-white font-bold text-lg shadow-lg flex items-center justify-center gap-2">
+                            <span id="registerBtnText">إنشاء حساب</span>
+                            <svg id="registerSpinner" class="hidden animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <!-- فاصل -->
                     <div class="relative my-6">
                         <div class="absolute inset-0 flex items-center">
                             <div class="w-full border-t border-gray-700"></div>
                         </div>
                         <div class="relative flex justify-center text-sm">
-                            <span class="px-4 bg-yasmin-dark text-gray-500 rounded">أو</span>
+                            <span class="px-4 bg-[#0F0A1E] text-gray-500 rounded">أو</span>
                         </div>
                     </div>
 
+                    <!-- تسجيل الدخول عبر وسائل التواصل -->
                     <div class="grid grid-cols-2 gap-3">
-                        <button class="social-btn py-2.5 rounded-xl flex items-center justify-center gap-2 text-gray-300 hover:text-white">
+                        <button onclick="socialLogin('google')" class="social-btn py-2.5 rounded-xl flex items-center justify-center gap-2 text-gray-300 hover:text-white">
                             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                 <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -235,19 +354,12 @@
                             </svg>
                             <span>Google</span>
                         </button>
-                        <button class="social-btn py-2.5 rounded-xl flex items-center justify-center gap-2 text-gray-300 hover:text-white">
+                        <button onclick="socialLogin('github')" class="social-btn py-2.5 rounded-xl flex items-center justify-center gap-2 text-gray-300 hover:text-white">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
                             </svg>
                             <span>GitHub</span>
                         </button>
-                    </div>
-
-                    <div class="mt-6 text-center">
-                        <p class="text-gray-400">
-                            ليس لديك حساب؟ 
-                            <a href="#" class="text-yasmin-primary hover:text-yasmin-secondary font-medium transition">سجل الآن</a>
-                        </p>
                     </div>
                 </div>
             </div>
@@ -255,58 +367,318 @@
     </div>
 
     <script>
-        // إظهار/إخفاء كلمة المرور
-        function togglePassword() {
-            const passwordInput = document.getElementById('password');
-            const eyeIcon = document.getElementById('eyeIcon');
+        // ═══════════════════════════════════════════════════
+        // إعدادات API
+        // ═══════════════════════════════════════════════════
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000/api' 
+            : 'https://your-server-domain.com/api';
 
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                eyeIcon.innerHTML = `
+        // ═══════════════════════════════════════════════════
+        // التنقل بين التبويبات
+        // ═══════════════════════════════════════════════════
+        function switchTab(tab) {
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const tabLogin = document.getElementById('tabLogin');
+            const tabRegister = document.getElementById('tabRegister');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                registerForm.classList.add('hidden');
+                tabLogin.classList.add('active');
+                tabRegister.classList.remove('active');
+            } else {
+                loginForm.classList.add('hidden');
+                registerForm.classList.remove('hidden');
+                tabLogin.classList.remove('active');
+                tabRegister.classList.add('active');
+            }
+
+            // إخفاء رسائل الخطأ
+            clearErrors();
+        }
+
+        // ═══════════════════════════════════════════════════
+        // إظهار/إخفاء كلمة المرور
+        // ═══════════════════════════════════════════════════
+        function togglePassword(inputId, eyeId) {
+            const input = document.getElementById(inputId);
+            const eye = document.getElementById(eyeId);
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                eye.innerHTML = `
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
                 `;
             } else {
-                passwordInput.type = 'password';
-                eyeIcon.innerHTML = `
+                input.type = 'password';
+                eye.innerHTML = `
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                 `;
             }
         }
 
-        // معالجة النموذج
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        // ═══════════════════════════════════════════════════
+        // Toast Notifications
+        // ═══════════════════════════════════════════════════
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-green-500/90 border-green-400',
+                error: 'bg-red-500/90 border-red-400',
+                info: 'bg-blue-500/90 border-blue-400',
+                warning: 'bg-yellow-500/90 border-yellow-400'
+            };
 
-            // هنا يمكنك إضافة منطق المصادقة
-            console.log('تسجيل الدخول:', { email, password });
+            toast.className = `toast ${colors[type]} text-white px-6 py-3 rounded-xl shadow-lg border backdrop-blur-sm flex items-center gap-2`;
+            toast.innerHTML = `
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                <span>${message}</span>
+            `;
 
-            // تأثير تحميل
-            const btn = this.querySelector('button[type="submit"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
-            btn.disabled = true;
+            container.appendChild(toast);
 
             setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                window.location.href = 'dashboard.html'; // تم التعديل هنا للانتقال إلى الموقع
-            }, 2000);
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(-100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // ═══════════════════════════════════════════════════
+        // التحقق من صحة البيانات
+        // ═══════════════════════════════════════════════════
+        function validateEmail(email) {
+            const regex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+            return regex.test(email);
+        }
+
+        function validatePhone(phone) {
+            const regex = /^(01)[0-2,5]{1}[0-9]{8}$/;
+            return regex.test(phone);
+        }
+
+        function validateNationalId(id) {
+            const regex = /^[2-3]{1}[0-9]{13}$/;
+            return regex.test(id);
+        }
+
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorEl = document.getElementById(fieldId + 'Error');
+            if (field) field.classList.add('error');
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            }
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.input-field').forEach(el => el.classList.remove('error'));
+            document.querySelectorAll('[id$="Error"]').forEach(el => el.classList.add('hidden'));
+        }
+
+        // ═══════════════════════════════════════════════════
+        // وظائف التحميل
+        // ═══════════════════════════════════════════════════
+        function setLoading(btnId, spinnerId, textId, isLoading) {
+            const btn = document.getElementById(btnId);
+            const spinner = document.getElementById(spinnerId);
+            const text = document.getElementById(textId);
+
+            btn.disabled = isLoading;
+            if (isLoading) {
+                spinner.classList.remove('hidden');
+                text.classList.add('hidden');
+            } else {
+                spinner.classList.add('hidden');
+                text.classList.remove('hidden');
+            }
+        }
+
+        // ═══════════════════════════════════════════════════
+        // تسجيل الدخول
+        // ═══════════════════════════════════════════════════
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            clearErrors();
+
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // التحقق
+            if (!email) {
+                showError('loginEmail', 'البريد الإلكتروني مطلوب');
+                return;
+            }
+            if (!validateEmail(email)) {
+                showError('loginEmail', 'بريد إلكتروني غير صالح');
+                return;
+            }
+            if (!password) {
+                showError('loginPassword', 'كلمة المرور مطلوبة');
+                return;
+            }
+
+            setLoading('loginBtn', 'loginSpinner', 'loginBtnText', true);
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // حفظ التوكن
+                    if (rememberMe) {
+                        localStorage.setItem('yasmin_token', data.token);
+                        localStorage.setItem('yasmin_user', JSON.stringify(data.user));
+                    } else {
+                        sessionStorage.setItem('yasmin_token', data.token);
+                        sessionStorage.setItem('yasmin_user', JSON.stringify(data.user));
+                    }
+
+                    showToast('تم تسجيل الدخول بنجاح! 🎉', 'success');
+
+                    // الانتقال للوحة التحكم
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    showToast(data.error || 'فشل تسجيل الدخول', 'error');
+                    document.getElementById('loginForm').classList.add('shake');
+                    setTimeout(() => document.getElementById('loginForm').classList.remove('shake'), 500);
+                }
+            } catch (error) {
+                console.error('Login Error:', error);
+                showToast('خطأ في الاتصال بالخادم. تأكد من تشغيل الخادم.', 'error');
+            } finally {
+                setLoading('loginBtn', 'loginSpinner', 'loginBtnText', false);
+            }
         });
 
-        // تأثيرات حركية للخلفية
-        document.addEventListener('mousemove', (e) => {
-            const particles = document.querySelectorAll('.particle');
-            const x = e.clientX / window.innerWidth;
-            const y = e.clientY / window.innerHeight;
+        // ═══════════════════════════════════════════════════
+        // التسجيل
+        // ═══════════════════════════════════════════════════
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            clearErrors();
 
-            particles.forEach((particle, index) => {
-                const speed = (index + 1) * 20;
-                particle.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
-            });
+            const firstName = document.getElementById('regFirstName').value.trim();
+            const lastName = document.getElementById('regLastName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const nationalId = document.getElementById('regNationalId').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+
+            // التحقق
+            let hasError = false;
+
+            if (!firstName) { showError('regFirstName', 'الاسم الأول مطلوب'); hasError = true; }
+            if (!lastName) { showError('regLastName', 'الاسم الأخير مطلوب'); hasError = true; }
+            if (!email) { showError('regEmail', 'البريد الإلكتروني مطلوب'); hasError = true; }
+            else if (!validateEmail(email)) { showError('regEmail', 'بريد إلكتروني غير صالح'); hasError = true; }
+            if (!phone) { showError('regPhone', 'رقم الهاتف مطلوب'); hasError = true; }
+            else if (!validatePhone(phone)) { showError('regPhone', 'رقم هاتف مصري غير صالح (مثال: 01012345678)'); hasError = true; }
+            if (!nationalId) { showError('regNationalId', 'الرقم القومي مطلوب'); hasError = true; }
+            else if (!validateNationalId(nationalId)) { showError('regNationalId', 'رقم قومي غير صالح (14 رقم)'); hasError = true; }
+            if (!password) { showError('regPassword', 'كلمة المرور مطلوبة'); hasError = true; }
+            else if (password.length < 6) { showError('regPassword', '6 أحرف على الأقل'); hasError = true; }
+            if (password !== confirmPassword) { showError('regConfirmPassword', 'كلمتا المرور غير متطابقتين'); hasError = true; }
+            if (!agreeTerms) { showToast('يجب الموافقة على الشروط', 'warning'); hasError = true; }
+
+            if (hasError) return;
+
+            setLoading('registerBtn', 'registerSpinner', 'registerBtnText', true);
+
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        firstName, lastName, email, phone, nationalId, password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // حفظ التوكن
+                    localStorage.setItem('yasmin_token', data.token);
+                    localStorage.setItem('yasmin_user', JSON.stringify(data.user));
+
+                    showToast('تم إنشاء الحساب بنجاح! 🎉', 'success');
+
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    showToast(data.error || 'فشل إنشاء الحساب', 'error');
+                }
+            } catch (error) {
+                console.error('Register Error:', error);
+                showToast('خطأ في الاتصال بالخادم. تأكد من تشغيل الخادم.', 'error');
+            } finally {
+                setLoading('registerBtn', 'registerSpinner', 'registerBtnText', false);
+            }
         });
+
+        // ═══════════════════════════════════════════════════
+        // تسجيل الدخول عبر وسائل التواصل
+        // ═══════════════════════════════════════════════════
+        function socialLogin(provider) {
+            showToast(`تسجيل الدخول عبر ${provider}... (يتطلب إعداد OAuth)`, 'info');
+            // TODO: تنفيذ OAuth حقيقي
+        }
+
+        // ═══════════════════════════════════════════════════
+        // نسيت كلمة المرور
+        // ═══════════════════════════════════════════════════
+        function showForgotPassword() {
+            showToast('سيتم إرسال رابط إعادة التعيين إلى بريدك', 'info');
+        }
+
+        // ═══════════════════════════════════════════════════
+        // التحقق من وجود جلسة نشطة
+        // ═══════════════════════════════════════════════════
+        (function checkSession() {
+            const token = localStorage.getItem('yasmin_token') || sessionStorage.getItem('yasmin_token');
+            if (token) {
+                // التحقق من صحة التوكن
+                fetch(`${API_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+                .then(res => {
+                    if (res.ok) {
+                        // التوكن صالح، الانتقال للوحة التحكم
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        // التوكن منتهي، مسحه
+                        localStorage.removeItem('yasmin_token');
+                        sessionStorage.removeItem('yasmin_token');
+                    }
+                })
+                .catch(() => {
+                    // الخادم غير متاح، البقاء في صفحة تسجيل الدخول
+                });
+            }
+        })();
     </script>
 </body>
-</html>
+</html>'''
+
+with open('/mnt/agents/output/login.html', 'w', encoding='utf-8') as f:
+    f.write(login_fixed)
+
