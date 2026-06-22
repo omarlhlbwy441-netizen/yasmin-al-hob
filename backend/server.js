@@ -1053,15 +1053,4 @@ app.listen(PORT, () => {
     ║                                                               ║
     ╚═══════════════════════════════════════════════════════════════╝
     `);
-});
-
-module.exports = app;
-'''
-
-# حفظ الملف
-with open('/mnt/agents/output/server.js', 'w', encoding='utf-8') as f:
-    f.write(server_js)
-
-print("✅ تم إنشاء server.js بنجاح!")
-print(f"📄 حجم الملف: {len(server_js)} حرف")
-print(f"📍 المسار: /mnt/agents/output/server.js")
+})
