@@ -47,42 +47,42 @@
             background: #0F0A1E;
             overflow-x: hidden;
         }
-        
+
         .glass-panel {
             background: rgba(30, 27, 75, 0.4);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(124, 58, 237, 0.2);
         }
-        
+
         .gradient-text {
             background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
+
         .input-field {
             background: rgba(15, 10, 30, 0.6);
             border: 1px solid rgba(124, 58, 237, 0.3);
             transition: all 0.3s ease;
         }
-        
+
         .input-field:focus {
             border-color: #7C3AED;
             box-shadow: 0 0 15px rgba(124, 58, 237, 0.3);
             outline: none;
         }
-        
+
         .btn-primary {
             background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
             transition: all 0.3s ease;
         }
-        
+
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
         }
-        
+
         .particle {
             position: absolute;
             border-radius: 50%;
@@ -90,13 +90,13 @@
             opacity: 0.3;
             animation: float 8s ease-in-out infinite;
         }
-        
+
         .social-btn {
             background: rgba(30, 27, 75, 0.6);
             border: 1px solid rgba(124, 58, 237, 0.2);
             transition: all 0.3s ease;
         }
-        
+
         .social-btn:hover {
             background: rgba(124, 58, 237, 0.2);
             border-color: #7C3AED;
@@ -106,20 +106,17 @@
 </head>
 <body class="min-h-screen flex items-center justify-center relative">
 
-    <!-- خلفية متحركة -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
         <div class="particle w-64 h-64 top-10 right-10 blur-3xl"></div>
         <div class="particle w-96 h-96 bottom-20 left-20 blur-3xl" style="animation-delay: 2s;"></div>
         <div class="particle w-48 h-48 top-1/2 left-1/2 blur-2xl" style="animation-delay: 4s;"></div>
     </div>
 
-    <!-- شبكة خلفية -->
     <div class="fixed inset-0 opacity-10" style="background-image: radial-gradient(circle at 1px 1px, rgba(124, 58, 237, 0.3) 1px, transparent 0); background-size: 40px 40px;"></div>
 
     <div class="container mx-auto px-4 relative z-10">
         <div class="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-12">
-            
-            <!-- الجانب الأيسر: العلامة التجارية -->
+
             <div class="lg:w-1/2 text-center lg:text-right">
                 <div class="mb-8">
                     <div class="inline-flex items-center gap-3 mb-6">
@@ -135,7 +132,6 @@
                     </p>
                 </div>
 
-                <!-- مميزات -->
                 <div class="space-y-4">
                     <div class="flex items-center gap-3 text-gray-300">
                         <div class="w-8 h-8 rounded-lg bg-yasmin-primary/20 flex items-center justify-center">
@@ -164,7 +160,6 @@
                 </div>
             </div>
 
-            <!-- الجانب الأيمن: نموذج تسجيل الدخول -->
             <div class="lg:w-1/2 w-full">
                 <div class="glass-panel rounded-3xl p-8 md:p-10 shadow-2xl">
                     <div class="text-center mb-8">
@@ -173,7 +168,6 @@
                     </div>
 
                     <form id="loginForm" class="space-y-5">
-                        <!-- البريد الإلكتروني -->
                         <div>
                             <label class="block text-gray-300 text-sm font-medium mb-2">البريد الإلكتروني</label>
                             <div class="relative">
@@ -190,7 +184,6 @@
                             </div>
                         </div>
 
-                        <!-- كلمة المرور -->
                         <div>
                             <label class="block text-gray-300 text-sm font-medium mb-2">كلمة المرور</label>
                             <div class="relative">
@@ -210,7 +203,6 @@
                             </div>
                         </div>
 
-                        <!-- تذكرني ونسيت كلمة المرور -->
                         <div class="flex items-center justify-between">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" class="w-4 h-4 rounded border-gray-600 text-yasmin-primary focus:ring-yasmin-primary bg-transparent">
@@ -219,13 +211,11 @@
                             <a href="#" class="text-yasmin-primary hover:text-yasmin-secondary text-sm transition">نسيت كلمة المرور؟</a>
                         </div>
 
-                        <!-- زر تسجيل الدخول -->
                         <button type="submit" class="btn-primary w-full py-3.5 rounded-xl text-white font-bold text-lg shadow-lg">
                             تسجيل الدخول
                         </button>
                     </form>
 
-                    <!-- فاصل -->
                     <div class="relative my-6">
                         <div class="absolute inset-0 flex items-center">
                             <div class="w-full border-t border-gray-700"></div>
@@ -235,7 +225,6 @@
                         </div>
                     </div>
 
-                    <!-- تسجيل الدخول عبر وسائل التواصل -->
                     <div class="grid grid-cols-2 gap-3">
                         <button class="social-btn py-2.5 rounded-xl flex items-center justify-center gap-2 text-gray-300 hover:text-white">
                             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -254,7 +243,6 @@
                         </button>
                     </div>
 
-                    <!-- تسجيل جديد -->
                     <div class="mt-6 text-center">
                         <p class="text-gray-400">
                             ليس لديك حساب؟ 
@@ -271,7 +259,7 @@
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const eyeIcon = document.getElementById('eyeIcon');
-            
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 eyeIcon.innerHTML = `
@@ -291,20 +279,20 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
+
             // هنا يمكنك إضافة منطق المصادقة
             console.log('تسجيل الدخول:', { email, password });
-            
+
             // تأثير تحميل
             const btn = this.querySelector('button[type="submit"]');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
             btn.disabled = true;
-            
+
             setTimeout(() => {
                 btn.innerHTML = originalText;
                 btn.disabled = false;
-                alert('مرحباً بك في ياسمين! 🌸');
+                window.location.href = 'dashboard.html'; // تم التعديل هنا للانتقال إلى الموقع
             }, 2000);
         });
 
@@ -313,7 +301,7 @@
             const particles = document.querySelectorAll('.particle');
             const x = e.clientX / window.innerWidth;
             const y = e.clientY / window.innerHeight;
-            
+
             particles.forEach((particle, index) => {
                 const speed = (index + 1) * 20;
                 particle.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
