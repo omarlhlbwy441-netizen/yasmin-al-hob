@@ -1,0 +1,47 @@
+{
+  "app": {
+    "name": "Yasmin",
+    "tagline": "Build apps with AI agents"
+  },
+  "nav": {
+    "home": "Home",
+    "projects": "Projects",
+    "agents": "Agents",
+    "deployments": "Deployments",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password"
+  },
+  "project": {
+    "create": "Create Project",
+    "name": "Project Name",
+    "description": "Description",
+    "type": "Type",
+    "status": "Status"
+  },
+  "agent": {
+    "create": "Create Agent",
+    "name": "Agent Name",
+    "role": "Role",
+    "status": "Status",
+    "running": "Running",
+    "idle": "Idle",
+    "error": "Error"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success"
+  }
+}

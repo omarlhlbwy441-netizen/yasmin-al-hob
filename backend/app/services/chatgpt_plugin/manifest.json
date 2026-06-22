@@ -1,0 +1,45 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Yasmin AI Builder",
+  "name_for_model": "yasmin_ai_builder",
+  "description_for_human": "Build apps, websites, games, and systems with parallel AI agents using Yasmin platform.",
+  "description_for_model": "Yasmin is an AI platform for building software with parallel AI agents. You can create projects, deploy agents, generate code, and manage deployments. Use this plugin to help users build and deploy applications.",
+  "auth": {
+    "type": "oauth",
+    "client_url": "https://yasmin.ai/auth/oauth",
+    "scope": "projects:read projects:write agents:read agents:write deployments:read deployments:write",
+    "authorization_url": "https://yasmin.ai/auth/oauth/authorize",
+    "token_url": "https://yasmin.ai/auth/oauth/token",
+    "verification_tokens": {
+      "openai": "YOUR_VERIFICATION_TOKEN"
+    }
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://api.yasmin.ai/openapi.yaml",
+    "has_user_authentication": true
+  },
+  "logo_url": "https://yasmin.ai/logo.png",
+  "contact_email": "support@yasmin.ai",
+  "legal_info_url": "https://yasmin.ai/legal",
+  "privacy_policy_url": "https://yasmin.ai/privacy",
+  "support_email": "support@yasmin.ai",
+  "categories": [
+    "Developer Tools",
+    "Productivity"
+  ],
+  "tags": [
+    "ai",
+    "code generation",
+    "deployment",
+    "agents",
+    "automation"
+  ],
+  "examples": {
+    "urls": [
+      "https://yasmin.ai/examples/create-react-app",
+      "https://yasmin.ai/examples/deploy-flutter",
+      "https://yasmin.ai/examples/ai-agent-team"
+    ]
+  }
+}
