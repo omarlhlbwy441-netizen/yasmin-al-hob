@@ -1,0 +1,1 @@
+Force rebuild and switch to Railpack auto-detection.
