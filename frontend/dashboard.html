@@ -1,50 +1,70 @@
 
-# تحديث dashboard.html لإضافة حماية وتحقق من التوكن
-dashboard_fixed = '''<!DOCTYPE html>
+# إنشاء dashboard.html مصلح - متجاوب للموبايل + حماية + تصميم نظيف
+dashboard_v2 = '''<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ياسمين - لوحة التحكم</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <style>
+        * { font-family: 'Tajawal', sans-serif; }
         body {
-            font-family: 'Tajawal', sans-serif;
             background: #0F0A1E;
+            min-height: 100vh;
             overflow-x: hidden;
         }
-        .glass-panel {
-            background: rgba(30, 27, 75, 0.4);
+        .glass {
+            background: rgba(30, 27, 75, 0.5);
             backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(124, 58, 237, 0.2);
         }
         .gradient-text {
-            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+            background: linear-gradient(135deg, #7C3AED, #EC4899);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         .card-gradient {
-            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+            background: linear-gradient(135deg, #7C3AED, #EC4899);
         }
         .sidebar-link {
-            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            color: #9CA3AF;
+            text-decoration: none;
+            transition: all 0.3s;
             position: relative;
         }
         .sidebar-link:hover, .sidebar-link.active {
             background: rgba(124, 58, 237, 0.15);
-            border-right: 3px solid #7C3AED;
+            color: white;
+        }
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 60%;
+            background: linear-gradient(180deg, #7C3AED, #EC4899);
+            border-radius: 3px;
         }
         .stat-card {
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
         .stat-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 10px 40px rgba(124, 58, 237, 0.2);
         }
         .project-card {
-            transition: all 0.3s ease;
+            transition: all 0.3s;
         }
         .project-card:hover {
             transform: translateY(-4px);
@@ -54,31 +74,16 @@ dashboard_fixed = '''<!DOCTYPE html>
             background: linear-gradient(90deg, #7C3AED, #EC4899);
         }
         .particle {
-            position: absolute;
+            position: fixed;
             border-radius: 50%;
             background: linear-gradient(135deg, #7C3AED, #EC4899);
-            opacity: 0.15;
-            animation: float 8s ease-in-out infinite;
+            opacity: 0.12;
+            pointer-events: none;
+            animation: float 12s ease-in-out infinite;
         }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0F0A1E;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #7C3AED;
-            border-radius: 3px;
-        }
-        .btn-glow {
-            transition: all 0.3s ease;
-        }
-        .btn-glow:hover {
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+            50% { transform: translateY(-30px); }
         }
         .loading-screen {
             position: fixed;
@@ -88,7 +93,7 @@ dashboard_fixed = '''<!DOCTYPE html>
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.5s;
         }
         .loading-screen.hidden {
             opacity: 0;
@@ -102,14 +107,24 @@ dashboard_fixed = '''<!DOCTYPE html>
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .mobile-menu-btn {
+            display: none;
         }
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(100%); position: fixed; z-index: 100; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-right: 0 !important; }
+            .mobile-menu-btn { display: flex; }
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0F0A1E; }
+        ::-webkit-scrollbar-thumb { background: #7C3AED; border-radius: 3px; }
     </style>
 </head>
-<body class="min-h-screen text-white">
+<body class="text-white">
 
-    <!-- شاشة التحميل -->
+    <!-- Loading -->
     <div id="loadingScreen" class="loading-screen">
         <div class="text-center">
             <div class="spinner mx-auto mb-4"></div>
@@ -117,235 +132,286 @@ dashboard_fixed = '''<!DOCTYPE html>
         </div>
     </div>
 
-    <!-- خلفية متحركة -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div class="particle w-96 h-96 -top-20 -right-20 blur-3xl"></div>
-        <div class="particle w-64 h-64 bottom-40 left-10 blur-3xl" style="animation-delay: 3s;"></div>
-    </div>
+    <!-- Particles -->
+    <div class="particle w-96 h-96 -top-20 -right-20 blur-3xl" style="animation-delay: 0s;"></div>
+    <div class="particle w-64 h-64 bottom-40 left-10 blur-3xl" style="animation-delay: 4s;"></div>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
 
     <div class="flex min-h-screen relative z-10">
 
-        <!-- ═══════════════════════════════════════════════ -->
-        <!-- الشريط الجانبي -->
-        <!-- ═══════════════════════════════════════════════ -->
-        <aside id="sidebar" class="w-72 glass-panel border-l border-purple-500/20 flex flex-col fixed h-full transition-transform duration-300 transform translate-x-0 z-50">
-            <!-- الشعار -->
-            <div class="p-6 border-b border-purple-500/20">
+        <!-- ═══════ SIDEBAR ═══════ -->
+        <aside id="sidebar" class="sidebar w-72 glass border-l border-purple-500/20 flex flex-col h-screen fixed right-0 top-0 transition-transform duration-300">
+            <!-- Logo -->
+            <div class="p-5 border-b border-purple-500/20 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl card-gradient flex items-center justify-center shadow-lg shadow-purple-500/30">
+                    <div class="w-10 h-10 rounded-xl card-gradient flex items-center justify-center shadow-lg">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold gradient-text">ياسمين</h1>
+                        <h1 class="text-lg font-bold gradient-text">ياسمين</h1>
                         <p class="text-xs text-gray-500">منصة البناء الذكي</p>
                     </div>
                 </div>
+                <button onclick="toggleSidebar()" class="lg:hidden text-gray-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
             </div>
 
-            <!-- روابط التنقل -->
-            <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
-                <a href="dashboard.html" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl text-white">
-                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
-                    </svg>
+            <!-- Nav -->
+            <nav class="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
+                <a href="dashboard.html" class="sidebar-link active">
+                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                     <span>لوحة التحكم</span>
                 </a>
-
-                <a href="wallet.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                    </svg>
+                <a href="wallet.html" class="sidebar-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                     <span>محفظتي</span>
-                    <span id="walletBalanceBadge" class="mr-auto px-2 py-0.5 text-xs bg-green-500/20 text-green-400 rounded-full">£E --</span>
+                    <span id="badgeBalance" class="mr-auto px-2 py-0.5 text-xs bg-green-500/20 text-green-400 rounded-full">£E --</span>
                 </a>
-
-                <a href="payment.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
+                <a href="payment.html" class="sidebar-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     <span>المدفوعات</span>
                 </a>
-
-                <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                    </svg>
+                <a href="#" class="sidebar-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                     <span>مشاريعي</span>
                     <span class="mr-auto px-2 py-0.5 text-xs bg-purple-500/20 text-purple-400 rounded-full">3</span>
                 </a>
-
-                <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
+                <a href="#" class="sidebar-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     <span>وكلاء الذكاء</span>
                 </a>
-
-                <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    </svg>
+                <a href="#" class="sidebar-link">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                     <span>الإعدادات</span>
                 </a>
             </nav>
 
-            <!-- المستخدم -->
+            <!-- User -->
             <div class="p-4 border-t border-purple-500/20">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center text-white font-bold" id="userAvatar">
-                        أ
-                    </div>
+                    <div class="w-10 h-10 rounded-full card-gradient flex items-center justify-center text-white font-bold text-sm" id="userAvatar">أ</div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium truncate" id="userName">أحمد محمد</p>
-                        <p class="text-xs text-gray-500" id="userKyc">KYC Level 2</p>
+                        <p class="text-sm font-medium truncate" id="userName">--</p>
+                        <p class="text-xs text-gray-500" id="userKyc">--</p>
                     </div>
-                    <button onclick="logout()" class="text-gray-500 hover:text-red-400 transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                        </svg>
+                    <button onclick="logout()" class="text-gray-500 hover:text-red-400 transition p-1">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
                     </button>
                 </div>
             </div>
         </aside>
 
-        <!-- ═══════════════════════════════════════════════ -->
-        <!-- المحتوى الرئيسي -->
-        <!-- ═══════════════════════════════════════════════ -->
-        <main class="flex-1 mr-72 p-8">
+        <!-- ═══════ MAIN CONTENT ═══════ -->
+        <main class="main-content flex-1 lg:mr-72 p-4 md:p-8">
 
-            <!-- شريط العنوان -->
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h2 class="text-2xl font-bold">مرحباً، <span id="welcomeName">أحمد</span> 👋</h2>
-                    <p class="text-gray-400 text-sm mt-1">إليك ملخص نشاطك اليوم</p>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button class="relative p-2 rounded-xl glass-panel hover:bg-purple-500/10 transition">
-                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                        </svg>
-                        <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleSidebar()" class="mobile-menu-btn lg:hidden p-2 rounded-xl glass text-gray-400 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                     </button>
-                    <button onclick="showNewProjectModal()" class="btn-glow card-gradient px-6 py-2.5 rounded-xl text-white font-medium flex items-center gap-2">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                        </svg>
-                        مشروع جديد
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold">مرحباً، <span id="welcomeName">--</span> 👋</h2>
+                        <p class="text-gray-400 text-sm mt-1">إليك ملخص نشاطك</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="relative p-2 rounded-xl glass hover:bg-purple-500/10 transition">
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                    <button onclick="showNewProject()" class="card-gradient px-4 md:px-6 py-2.5 rounded-xl text-white font-medium text-sm flex items-center gap-2 shadow-lg hover:shadow-purple-500/30 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                        <span class="hidden md:inline">مشروع جديد</span>
                     </button>
                 </div>
             </div>
 
-            <!-- ═══════════════════════════════════════════════ -->
-            <!-- الإحصائيات -->
-            <!-- ═══════════════════════════════════════════════ -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="stat-card glass-panel rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                            </svg>
+            <!-- Stats -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="stat-card glass rounded-2xl p-4 md:p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                         </div>
-                        <span class="text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded-full">+2 هذا الشهر</span>
+                        <span class="text-xs text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">+2</span>
                     </div>
-                    <p class="text-gray-400 text-sm">المشاريع النشطة</p>
-                    <p class="text-3xl font-bold mt-1">12</p>
+                    <p class="text-gray-400 text-xs md:text-sm">المشاريع</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-1">12</p>
                 </div>
-
-                <div class="stat-card glass-panel rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                            </svg>
+                <div class="stat-card glass rounded-2xl p-4 md:p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                         </div>
-                        <span class="text-xs text-purple-400 bg-purple-500/10 px-2 py-1 rounded-full">24/7</span>
+                        <span class="text-xs text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full">24/7</span>
                     </div>
-                    <p class="text-gray-400 text-sm">وكلاء الذكاء النشطين</p>
-                    <p class="text-3xl font-bold mt-1">8</p>
+                    <p class="text-gray-400 text-xs md:text-sm">الوكلاء</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-1">8</p>
                 </div>
-
-                <div class="stat-card glass-panel rounded-2xl p-6 cursor-pointer" onclick="window.location.href='wallet.html'">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
+                <div class="stat-card glass rounded-2xl p-4 md:p-6 cursor-pointer" onclick="location.href='wallet.html'">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         </div>
-                        <span class="text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded-full">+15%</span>
+                        <span class="text-xs text-green-400 bg-green-500/10 px-2 py-0.5 rounded-full">+15%</span>
                     </div>
-                    <p class="text-gray-400 text-sm">رصيد المحفظة</p>
-                    <p class="text-3xl font-bold mt-1 gradient-text" id="dashboardBalance">£E 12,450</p>
+                    <p class="text-gray-400 text-xs md:text-sm">الرصيد</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-1 gradient-text" id="dashBalance">£E --</p>
                 </div>
-
-                <div class="stat-card glass-panel rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
-                            </svg>
+                <div class="stat-card glass rounded-2xl p-4 md:p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
                         </div>
-                        <span class="text-xs text-gray-400 bg-gray-500/10 px-2 py-1 rounded-full">هذا الأسبوع</span>
+                        <span class="text-xs text-gray-400 bg-gray-500/10 px-2 py-0.5 rounded-full">أسبوع</span>
                     </div>
-                    <p class="text-gray-400 text-sm">المعاملات</p>
-                    <p class="text-3xl font-bold mt-1">47</p>
+                    <p class="text-gray-400 text-xs md:text-sm">المعاملات</p>
+                    <p class="text-2xl md:text-3xl font-bold mt-1">47</p>
                 </div>
             </div>
 
-            <!-- بقية المحتوى... -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                <div class="lg:col-span-2 glass-panel rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-6">
+            <!-- Projects + Wallet -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
+                <div class="lg:col-span-2 glass rounded-2xl p-4 md:p-6">
+                    <div class="flex items-center justify-between mb-4">
                         <h3 class="text-lg font-bold">مشاريعي الحديثة</h3>
-                        <a href="#" class="text-sm text-purple-400 hover:text-pink-400 transition">عرض الكل</a>
+                        <a href="#" class="text-sm text-purple-400 hover:text-pink-400">عرض الكل</a>
                     </div>
-                    <div class="space-y-4">
-                        <div class="project-card glass-panel rounded-xl p-4 border border-gray-700/50">
-                            <div class="flex items-start justify-between">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">ت</div>
-                                    <div>
-                                        <h4 class="font-medium">تطبيق ياسمين AI</h4>
-                                        <p class="text-sm text-gray-500 mt-1">وكلاء ذكاء اصطناعي متوازيين</p>
-                                        <div class="flex items-center gap-3 mt-2">
-                                            <span class="text-xs px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full">نشط</span>
-                                            <span class="text-xs text-gray-500">آخر تحديث: منذ ساعتين</span>
-                                        </div>
+                    <div class="space-y-3">
+                        <div class="project-card glass rounded-xl p-4 border border-gray-700/50">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold shrink-0">ت</div>
+                                    <div class="min-w-0">
+                                        <h4 class="font-medium text-sm md:text-base truncate">تطبيق ياسمين AI</h4>
+                                        <p class="text-xs text-gray-500 mt-0.5">وكلاء ذكاء اصطناعي</p>
+                                        <span class="inline-block mt-1 text-xs px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full">نشط</span>
                                     </div>
                                 </div>
-                                <div class="text-left">
-                                    <p class="text-sm text-gray-400">التقدم</p>
-                                    <p class="text-xl font-bold text-purple-400">78%</p>
+                                <div class="text-left shrink-0">
+                                    <p class="text-xs text-gray-400">التقدم</p>
+                                    <p class="text-lg font-bold text-purple-400">78%</p>
                                 </div>
                             </div>
-                            <div class="mt-4 w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                            <div class="mt-3 w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
                                 <div class="progress-bar h-full rounded-full" style="width: 78%"></div>
                             </div>
                         </div>
+                        <div class="project-card glass rounded-xl p-4 border border-gray-700/50">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center text-white font-bold shrink-0">م</div>
+                                    <div class="min-w-0">
+                                        <h4 class="font-medium text-sm md:text-base truncate">متجر إلكتروني</h4>
+                                        <p class="text-xs text-gray-500 mt-0.5">متجر منتجات ذكية</p>
+                                        <span class="inline-block mt-1 text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full">قيد التطوير</span>
+                                    </div>
+                                </div>
+                                <div class="text-left shrink-0">
+                                    <p class="text-xs text-gray-400">التقدم</p>
+                                    <p class="text-lg font-bold text-pink-400">45%</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="progress-bar h-full rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="glass-panel rounded-2xl p-6">
-                    <h3 class="text-lg font-bold mb-6">ملخص المحفظة</h3>
-                    <div class="card-gradient rounded-2xl p-6 mb-6 relative overflow-hidden">
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+                <div class="glass rounded-2xl p-4 md:p-6">
+                    <h3 class="text-lg font-bold mb-4">ملخص المحفظة</h3>
+                    <div class="card-gradient rounded-2xl p-5 mb-4 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
                         <div class="relative z-10">
                             <p class="text-white/80 text-sm mb-1">الرصيد المتاح</p>
-                            <h4 class="text-3xl font-bold text-white" id="walletBalance">£E 12,450.00</h4>
+                            <h4 class="text-2xl md:text-3xl font-bold text-white" id="walletBalance">£E --</h4>
                         </div>
                     </div>
-                    <div class="space-y-3">
-                        <button onclick="window.location.href='payment.html'" class="w-full py-3 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-300 hover:bg-purple-600/30 transition flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    <div class="space-y-2">
+                        <button onclick="location.href='payment.html'" class="w-full py-2.5 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-300 hover:bg-purple-600/30 transition text-sm flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                             إيداع جديد
                         </button>
-                        <button onclick="window.location.href='wallet.html'" class="w-full py-3 rounded-xl bg-gray-700/30 border border-gray-600/30 text-gray-300 hover:bg-gray-700/50 transition flex items-center justify-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                            عرض التفاصيل
+                        <button onclick="location.href='wallet.html'" class="w-full py-2.5 rounded-xl bg-gray-700/30 border border-gray-600/30 text-gray-300 hover:bg-gray-700/50 transition text-sm flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                            التفاصيل
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agents + Activity -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+                <div class="glass rounded-2xl p-4 md:p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold">وكلاء الذكاء</h3>
+                        <span class="text-sm text-purple-400 cursor-pointer">+ إضافة</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-800/30 border border-gray-700/50">
+                            <div class="w-9 h-9 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-sm">وكيل البرمجة</p>
+                                <p class="text-xs text-gray-500">Node.js, React</p>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span class="text-xs text-green-400">يعمل</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-800/30 border border-gray-700/50">
+                            <div class="w-9 h-9 rounded-full bg-purple-500/20 flex items-center justify-center shrink-0">
+                                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="font-medium text-sm">وكيل التصميم</p>
+                                <p class="text-xs text-gray-500">UI/UX, Figma</p>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span class="text-xs text-green-400">يعمل</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass rounded-2xl p-4 md:p-6">
+                    <h3 class="text-lg font-bold mb-4">النشاط الأخير</h3>
+                    <div class="space-y-4 relative">
+                        <div class="absolute right-3.5 top-2 bottom-2 w-0.5 bg-gradient-to-b from-purple-500 to-pink-500 opacity-30"></div>
+                        <div class="flex items-start gap-4 pr-8 relative">
+                            <div class="absolute right-2 w-3 h-3 bg-purple-500 rounded-full border-2 border-[#0F0A1E]"></div>
+                            <div>
+                                <p class="text-sm font-medium">مشروع جديد</p>
+                                <p class="text-xs text-gray-500">تطبيق ياسمين AI</p>
+                                <p class="text-xs text-gray-600 mt-0.5">منذ 30 دقيقة</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 pr-8 relative">
+                            <div class="absolute right-2 w-3 h-3 bg-green-500 rounded-full border-2 border-[#0F0A1E]"></div>
+                            <div>
+                                <p class="text-sm font-medium">إيداع ناجح</p>
+                                <p class="text-xs text-gray-500">£E 5,000 عبر Paymob</p>
+                                <p class="text-xs text-gray-600 mt-0.5">منذ ساعتين</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-4 pr-8 relative">
+                            <div class="absolute right-2 w-3 h-3 bg-blue-500 rounded-full border-2 border-[#0F0A1E]"></div>
+                            <div>
+                                <p class="text-sm font-medium">مهمة مكتملة</p>
+                                <p class="text-xs text-gray-500">إنشاء API endpoints</p>
+                                <p class="text-xs text-gray-600 mt-0.5">منذ 3 ساعات</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -353,73 +419,70 @@ dashboard_fixed = '''<!DOCTYPE html>
         </main>
     </div>
 
-    <!-- نموذج مشروع جديد -->
+    <!-- New Project Modal -->
     <div id="newProjectModal" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="hideNewProjectModal()"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg">
-            <div class="glass-panel rounded-3xl p-8">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="hideNewProject()"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md px-4">
+            <div class="glass rounded-3xl p-6 md:p-8">
                 <div class="flex items-center justify-between mb-6">
                     <h3 class="text-xl font-bold">مشروع جديد</h3>
-                    <button onclick="hideNewProjectModal()" class="text-gray-500 hover:text-white">
+                    <button onclick="hideNewProject()" class="text-gray-500 hover:text-white">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
-                <form class="space-y-5">
+                <div class="space-y-4">
                     <div>
                         <label class="block text-gray-300 text-sm mb-2">اسم المشروع</label>
                         <input type="text" class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 focus:outline-none" placeholder="مثال: تطبيق توصيل">
                     </div>
-                    <button type="button" onclick="hideNewProjectModal()" class="card-gradient w-full py-3.5 rounded-xl text-white font-bold shadow-lg">إنشاء المشروع</button>
-                </form>
+                    <button onclick="hideNewProject()" class="card-gradient w-full py-3 rounded-xl text-white font-bold shadow-lg">إنشاء المشروع</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         // ═══════════════════════════════════════════════════
-        // إعدادات API
+        // API URL
         // ═══════════════════════════════════════════════════
-        const API_URL = window.location.hostname === 'localhost'
-            ? 'http://localhost:3000/api'
-            : 'https://your-server-domain.com/api';
+        const API_URL = (() => {
+            const h = window.location.hostname;
+            if (h === 'localhost' || h === '127.0.0.1') return 'http://localhost:3000/api';
+            return window.location.origin + '/api';
+        })();
 
         // ═══════════════════════════════════════════════════
-        // التحقق من الجلسة
+        // Auth Check
         // ═══════════════════════════════════════════════════
         async function checkAuth() {
             const token = localStorage.getItem('yasmin_token') || sessionStorage.getItem('yasmin_token');
 
             if (!token) {
-                // لا يوجد توكن، الانتقال لصفحة تسجيل الدخول
                 window.location.href = 'login.html';
                 return false;
             }
 
             try {
-                const response = await fetch(`${API_URL}/auth/me`, {
+                const res = await fetch(`${API_URL}/auth/me`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
 
-                if (!response.ok) {
-                    // التوكن منتهي
-                    localStorage.removeItem('yasmin_token');
-                    sessionStorage.removeItem('yasmin_token');
-                    localStorage.removeItem('yasmin_user');
-                    sessionStorage.removeItem('yasmin_user');
+                if (!res.ok) {
+                    localStorage.clear();
+                    sessionStorage.clear();
                     window.location.href = 'login.html';
                     return false;
                 }
 
-                const data = await response.json();
-                updateUserInfo(data.user, data.wallet);
+                const data = await res.json();
+                updateUI(data.user, data.wallet);
                 return true;
 
-            } catch (error) {
-                console.error('Auth check error:', error);
-                // الخادم غير متاح، نعرض البيانات المحلية
+            } catch (err) {
+                // Offline mode - use cached data
                 const user = JSON.parse(localStorage.getItem('yasmin_user') || '{}');
                 if (user.firstName) {
-                    updateUserInfo(user, null);
+                    updateUI(user, null);
                     document.getElementById('loadingScreen').classList.add('hidden');
                     return true;
                 }
@@ -428,61 +491,65 @@ dashboard_fixed = '''<!DOCTYPE html>
             }
         }
 
-        // ═══════════════════════════════════════════════════
-        // تحديث بيانات المستخدم في الواجهة
-        // ═══════════════════════════════════════════════════
-        function updateUserInfo(user, wallet) {
+        function updateUI(user, wallet) {
             if (user) {
                 document.getElementById('welcomeName').textContent = user.firstName || 'أحمد';
-                document.getElementById('userName').textContent = `${user.firstName || 'أحمد'} ${user.lastName || 'محمد'}`;
+                document.getElementById('userName').textContent = (user.firstName || 'أحمد') + ' ' + (user.lastName || 'محمد');
                 document.getElementById('userAvatar').textContent = (user.firstName || 'أ')[0];
-                document.getElementById('userKyc').textContent = `KYC Level ${user.kycLevel || 0}`;
+                document.getElementById('userKyc').textContent = 'KYC Level ' + (user.kycLevel || 0);
             }
             if (wallet) {
-                const balance = (wallet.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2 });
-                document.getElementById('dashboardBalance').textContent = `£E ${balance}`;
-                document.getElementById('walletBalance').textContent = `£E ${balance}`;
-                document.getElementById('walletBalanceBadge').textContent = `£E ${balance}`;
+                const bal = (wallet.balance / 100).toLocaleString('en-US', {minimumFractionDigits: 2});
+                document.getElementById('dashBalance').textContent = '£E ' + bal;
+                document.getElementById('walletBalance').textContent = '£E ' + bal;
+                document.getElementById('badgeBalance').textContent = '£E ' + bal;
+            } else {
+                document.getElementById('dashBalance').textContent = '£E 12,450.00';
+                document.getElementById('walletBalance').textContent = '£E 12,450.00';
+                document.getElementById('badgeBalance').textContent = '£E 12,450';
             }
             document.getElementById('loadingScreen').classList.add('hidden');
         }
 
         // ═══════════════════════════════════════════════════
-        // تسجيل الخروج
+        // Logout
         // ═══════════════════════════════════════════════════
         function logout() {
-            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
-                localStorage.removeItem('yasmin_token');
-                sessionStorage.removeItem('yasmin_token');
-                localStorage.removeItem('yasmin_user');
-                sessionStorage.removeItem('yasmin_user');
+            if (confirm('تسجيل الخروج؟')) {
+                localStorage.clear();
+                sessionStorage.clear();
                 window.location.href = 'login.html';
             }
         }
 
         // ═══════════════════════════════════════════════════
-        // نموذج مشروع جديد
+        // Sidebar Toggle
         // ═══════════════════════════════════════════════════
-        function showNewProjectModal() {
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('mobileOverlay');
+            sb.classList.toggle('open');
+            ov.classList.toggle('hidden');
+        }
+
+        // ═══════════════════════════════════════════════════
+        // New Project Modal
+        // ═══════════════════════════════════════════════════
+        function showNewProject() {
             document.getElementById('newProjectModal').classList.remove('hidden');
         }
-        function hideNewProjectModal() {
+        function hideNewProject() {
             document.getElementById('newProjectModal').classList.add('hidden');
         }
 
         // ═══════════════════════════════════════════════════
-        // تشغيل عند تحميل الصفحة
+        // Init
         // ═══════════════════════════════════════════════════
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
-        });
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') hideNewProjectModal();
-        });
+        document.addEventListener('DOMContentLoaded', checkAuth);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') hideNewProject(); });
     </script>
 </body>
 </html>'''
 
 with open('/mnt/agents/output/dashboard.html', 'w', encoding='utf-8') as f:
-    f.write(dashboard_fixed)
+    f.write(dashboard_v2)
