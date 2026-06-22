@@ -1,17 +1,689 @@
-<!DOCTYPE html>
-<html lang="en">
+
+dashboard_html = '''<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#667eea" />
-  <meta name="description" content="Build apps, websites, games, and systems with parallel AI agents" />
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="apple-touch-icon" href="/icon-192x192.png" />
-  <title>Yasmin AI Builder</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ياسمين - لوحة التحكم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        tajawal: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        yasmin: {
+                            primary: '#7C3AED',
+                            secondary: '#EC4899',
+                            accent: '#8B5CF6',
+                            dark: '#1E1B4B',
+                            surface: '#0F0A1E',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glow: {
+                            '0%': { boxShadow: '0 0 5px rgba(124, 58, 237, 0.5)' },
+                            '100%': { boxShadow: '0 0 20px rgba(124, 58, 237, 0.8), 0 0 40px rgba(236, 72, 153, 0.4)' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: #0F0A1E;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(30, 27, 75, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-gradient {
+            background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+        }
+
+        .sidebar-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            background: rgba(124, 58, 237, 0.15);
+            border-right: 3px solid #7C3AED;
+        }
+
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 60%;
+            background: linear-gradient(180deg, #7C3AED, #EC4899);
+            border-radius: 3px;
+        }
+
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.2);
+        }
+
+        .project-card {
+            transition: all 0.3s ease;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(124, 58, 237, 0.5);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #7C3AED, #EC4899);
+        }
+
+        .notification-badge {
+            animation: pulse 2s infinite;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7C3AED, #EC4899);
+            opacity: 0.15;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0F0A1E;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #7C3AED;
+            border-radius: 3px;
+        }
+
+        .btn-glow {
+            transition: all 0.3s ease;
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+        }
+    </style>
 </head>
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.tsx"></script>
+<body class="min-h-screen text-white">
+
+    <!-- خلفية متحركة -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="particle w-96 h-96 -top-20 -right-20 blur-3xl"></div>
+        <div class="particle w-64 h-64 bottom-40 left-10 blur-3xl" style="animation-delay: 3s;"></div>
+    </div>
+
+    <div class="flex min-h-screen relative z-10">
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- الشريط الجانبي -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <aside id="sidebar" class="w-72 glass-panel border-l border-purple-500/20 flex flex-col fixed h-full transition-transform duration-300 transform translate-x-0 z-50">
+            <!-- الشعار -->
+            <div class="p-6 border-b border-purple-500/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl card-gradient flex items-center justify-center animate-glow">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold gradient-text">ياسمين</h1>
+                        <p class="text-xs text-gray-500">منصة البناء الذكي</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- روابط التنقل -->
+            <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
+                <a href="#" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl text-white">
+                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    </svg>
+                    <span>لوحة التحكم</span>
+                </a>
+
+                <a href="wallet.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                    </svg>
+                    <span>محفظتي</span>
+                    <span class="mr-auto px-2 py-0.5 text-xs bg-green-500/20 text-green-400 rounded-full">£E 12,450</span>
+                </a>
+
+                <a href="payment.html" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span>المدفوعات</span>
+                </a>
+
+                <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+                    </svg>
+                    <span>مشاريعي</span>
+                    <span class="mr-auto px-2 py-0.5 text-xs bg-purple-500/20 text-purple-400 rounded-full">3</span>
+                </a>
+
+                <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <span>وكلاء الذكاء</span>
+                </a>
+
+                <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                    <span>الإعدادات</span>
+                </a>
+            </nav>
+
+            <!-- المستخدم -->
+            <div class="p-4 border-t border-purple-500/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-pink-500 flex items-center justify-center text-white font-bold">
+                        أ
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">أحمد محمد</p>
+                        <p class="text-xs text-gray-500">KYC Level 2</p>
+                    </div>
+                    <button onclick="logout()" class="text-gray-500 hover:text-red-400 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- المحتوى الرئيسي -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <main class="flex-1 mr-72 p-8">
+
+            <!-- شريط العنوان -->
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold">مرحباً، أحمد 👋</h2>
+                    <p class="text-gray-400 text-sm mt-1">إليك ملخص نشاطك اليوم</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- الإشعارات -->
+                    <button class="relative p-2 rounded-xl glass-panel hover:bg-purple-500/10 transition">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                        <span class="notification-badge absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+                    </button>
+                    <!-- زر مشروع جديد -->
+                    <button onclick="showNewProjectModal()" class="btn-glow card-gradient px-6 py-2.5 rounded-xl text-white font-medium flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                        مشروع جديد
+                    </button>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════ -->
+            <!-- الإحصائيات -->
+            <!-- ═══════════════════════════════════════════════ -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- المشاريع -->
+                <div class="stat-card glass-panel rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded-full">+2 هذا الشهر</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">المشاريع النشطة</p>
+                    <p class="text-3xl font-bold mt-1">12</p>
+                </div>
+
+                <!-- الوكلاء -->
+                <div class="stat-card glass-panel rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-pink-500/20 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-purple-400 bg-purple-500/10 px-2 py-1 rounded-full">24/7</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">وكلاء الذكاء النشطين</p>
+                    <p class="text-3xl font-bold mt-1">8</p>
+                </div>
+
+                <!-- الرصيد -->
+                <div class="stat-card glass-panel rounded-2xl p-6 cursor-pointer" onclick="window.location.href='wallet.html'">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-green-400 bg-green-500/10 px-2 py-1 rounded-full">+15%</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">رصيد المحفظة</p>
+                    <p class="text-3xl font-bold mt-1 gradient-text">£E 12,450</p>
+                </div>
+
+                <!-- المعاملات -->
+                <div class="stat-card glass-panel rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs text-gray-400 bg-gray-500/10 px-2 py-1 rounded-full">هذا الأسبوع</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">المعاملات</p>
+                    <p class="text-3xl font-bold mt-1">47</p>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════ -->
+            <!-- المشاريع + المحفظة -->
+            <!-- ═══════════════════════════════════════════════ -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+
+                <!-- المشاريع الحديثة -->
+                <div class="lg:col-span-2 glass-panel rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold">مشاريعي الحديثة</h3>
+                        <a href="#" class="text-sm text-purple-400 hover:text-pink-400 transition">عرض الكل</a>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- مشروع 1 -->
+                        <div class="project-card glass-panel rounded-xl p-4 border border-gray-700/50">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                                        ت
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">تطبيق ياسمين AI</h4>
+                                        <p class="text-sm text-gray-500 mt-1">وكلاء ذكاء اصطناعي متوازيين</p>
+                                        <div class="flex items-center gap-3 mt-2">
+                                            <span class="text-xs px-2 py-0.5 bg-green-500/20 text-green-400 rounded-full">نشط</span>
+                                            <span class="text-xs text-gray-500">آخر تحديث: منذ ساعتين</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-sm text-gray-400">التقدم</p>
+                                    <p class="text-xl font-bold text-purple-400">78%</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="progress-bar h-full rounded-full" style="width: 78%"></div>
+                            </div>
+                        </div>
+
+                        <!-- مشروع 2 -->
+                        <div class="project-card glass-panel rounded-xl p-4 border border-gray-700/50">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center text-white font-bold text-lg">
+                                        م
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">متجر إلكتروني</h4>
+                                        <p class="text-sm text-gray-500 mt-1">متجر منتجات ذكية</p>
+                                        <div class="flex items-center gap-3 mt-2">
+                                            <span class="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full">قيد التطوير</span>
+                                            <span class="text-xs text-gray-500">آخر تحديث: أمس</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-sm text-gray-400">التقدم</p>
+                                    <p class="text-xl font-bold text-pink-400">45%</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="progress-bar h-full rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+
+                        <!-- مشروع 3 -->
+                        <div class="project-card glass-panel rounded-xl p-4 border border-gray-700/50">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center text-white font-bold text-lg">
+                                        ل
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium">لعبة تفاعلية</h4>
+                                        <p class="text-sm text-gray-500 mt-1">لعبة RPG بذكاء اصطناعي</p>
+                                        <div class="flex items-center gap-3 mt-2">
+                                            <span class="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded-full">تخطيط</span>
+                                            <span class="text-xs text-gray-500">آخر تحديث: منذ 3 أيام</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-sm text-gray-400">التقدم</p>
+                                    <p class="text-xl font-bold text-green-400">12%</p>
+                                </div>
+                            </div>
+                            <div class="mt-4 w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <div class="progress-bar h-full rounded-full" style="width: 12%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ملخص المحفظة -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-6">ملخص المحفظة</h3>
+
+                    <!-- بطاقة الرصيد -->
+                    <div class="card-gradient rounded-2xl p-6 mb-6 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+                        <div class="relative z-10">
+                            <p class="text-white/80 text-sm mb-1">الرصيد المتاح</p>
+                            <h4 class="text-3xl font-bold text-white">£E 12,450.00</h4>
+                            <div class="flex justify-between items-center mt-4 pt-4 border-t border-white/20">
+                                <div>
+                                    <p class="text-white/60 text-xs">الإيداعات</p>
+                                    <p class="text-white font-medium">£E 8,200</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-white/60 text-xs">السحوبات</p>
+                                    <p class="text-white font-medium">£E 3,150</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- عمليات سريعة -->
+                    <div class="space-y-3">
+                        <button onclick="window.location.href='payment.html'" class="w-full py-3 rounded-xl bg-purple-600/20 border border-purple-500/30 text-purple-300 hover:bg-purple-600/30 transition flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            إيداع جديد
+                        </button>
+                        <button onclick="window.location.href='wallet.html'" class="w-full py-3 rounded-xl bg-gray-700/30 border border-gray-600/30 text-gray-300 hover:bg-gray-700/50 transition flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            عرض التفاصيل
+                        </button>
+                    </div>
+
+                    <!-- آخر المعاملات -->
+                    <div class="mt-6">
+                        <h4 class="text-sm font-medium text-gray-400 mb-3">آخر المعاملات</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between text-sm">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"/>
+                                        </svg>
+                                    </div>
+                                    <span>إيداع</span>
+                                </div>
+                                <span class="text-green-400">+ £E 5,000</span>
+                            </div>
+                            <div class="flex items-center justify-between text-sm">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"/>
+                                        </svg>
+                                    </div>
+                                    <span>سحب</span>
+                                </div>
+                                <span class="text-red-400">- £E 1,500</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════ -->
+            <!-- وكلاء الذكاء + النشاط -->
+            <!-- ═══════════════════════════════════════════════ -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- وكلاء الذكاء النشطين -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold">وكلاء الذكاء النشطين</h3>
+                        <button class="text-sm text-purple-400 hover:text-pink-400 transition">+ إضافة وكيل</button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 p-4 rounded-xl bg-gray-800/30 border border-gray-700/50">
+                            <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium">وكيل البرمجة</p>
+                                <p class="text-xs text-gray-500">Node.js, React, Python</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span class="text-xs text-green-400">يعمل</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 p-4 rounded-xl bg-gray-800/30 border border-gray-700/50">
+                            <div class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium">وكيل التصميم</p>
+                                <p class="text-xs text-gray-500">UI/UX, Figma, Tailwind</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span class="text-xs text-green-400">يعمل</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-4 p-4 rounded-xl bg-gray-800/30 border border-gray-700/50">
+                            <div class="w-10 h-10 rounded-full bg-pink-500/20 flex items-center justify-center">
+                                <svg class="w-5 h-5 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium">وكيل المحتوى</p>
+                                <p class="text-xs text-gray-500">كتابة, ترجمة, SEO</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2 h-2 bg-yellow-500 rounded-full"></span>
+                                <span class="text-xs text-yellow-400">معلق</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- النشاط الأخير -->
+                <div class="glass-panel rounded-2xl p-6">
+                    <h3 class="text-lg font-bold mb-6">النشاط الأخير</h3>
+
+                    <div class="space-y-4 relative">
+                        <!-- خط الزمن -->
+                        <div class="absolute right-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500 to-pink-500 opacity-30"></div>
+
+                        <div class="flex items-start gap-4 pr-8 relative">
+                            <div class="absolute right-2.5 w-3 h-3 bg-purple-500 rounded-full border-2 border-yasmin-surface"></div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">تم إنشاء مشروع جديد</p>
+                                <p class="text-xs text-gray-500 mt-1">تطبيق ياسمين AI</p>
+                                <p class="text-xs text-gray-600 mt-1">منذ 30 دقيقة</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 pr-8 relative">
+                            <div class="absolute right-2.5 w-3 h-3 bg-green-500 rounded-full border-2 border-yasmin-surface"></div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">إيداع ناجح</p>
+                                <p class="text-xs text-gray-500 mt-1">£E 5,000 عبر Paymob</p>
+                                <p class="text-xs text-gray-600 mt-1">منذ ساعتين</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 pr-8 relative">
+                            <div class="absolute right-2.5 w-3 h-3 bg-blue-500 rounded-full border-2 border-yasmin-surface"></div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">وكيل البرمجة أكمل مهمة</p>
+                                <p class="text-xs text-gray-500 mt-1">إنشاء API endpoints</p>
+                                <p class="text-xs text-gray-600 mt-1">منذ 3 ساعات</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4 pr-8 relative">
+                            <div class="absolute right-2.5 w-3 h-3 bg-pink-500 rounded-full border-2 border-yasmin-surface"></div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">تحديث KYC</p>
+                                <p class="text-xs text-gray-500 mt-1">تم التحقق من المستوى 2</p>
+                                <p class="text-xs text-gray-600 mt-1">أمس</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- نموذج مشروع جديد -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <div id="newProjectModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="hideNewProjectModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-lg">
+            <div class="glass-panel rounded-3xl p-8 animate-slide-up">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold">مشروع جديد</h3>
+                    <button onclick="hideNewProjectModal()" class="text-gray-500 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <form class="space-y-5">
+                    <div>
+                        <label class="block text-gray-300 text-sm mb-2">اسم المشروع</label>
+                        <input type="text" class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 focus:outline-none" placeholder="مثال: تطبيق توصيل">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-300 text-sm mb-2">نوع المشروع</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button type="button" class="p-3 rounded-xl border border-gray-700 bg-gray-800/30 text-gray-300 hover:border-purple-500 hover:text-white transition text-sm">تطبيق موبايل</button>
+                            <button type="button" class="p-3 rounded-xl border border-gray-700 bg-gray-800/30 text-gray-300 hover:border-purple-500 hover:text-white transition text-sm">موقع ويب</button>
+                            <button type="button" class="p-3 rounded-xl border border-gray-700 bg-gray-800/30 text-gray-300 hover:border-purple-500 hover:text-white transition text-sm">لعبة</button>
+                            <button type="button" class="p-3 rounded-xl border border-gray-700 bg-gray-800/30 text-gray-300 hover:border-purple-500 hover:text-white transition text-sm">نظام</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-300 text-sm mb-2">الوصف</label>
+                        <textarea class="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 focus:outline-none h-24 resize-none" placeholder="وصف مختصر للمشروع..."></textarea>
+                    </div>
+
+                    <button type="button" onclick="hideNewProjectModal()" class="card-gradient w-full py-3.5 rounded-xl text-white font-bold shadow-lg">
+                        إنشاء المشروع
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // تسجيل الخروج
+        function logout() {
+            if (confirm('هل أنت متأكد من تسجيل الخروج؟')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // نموذج مشروع جديد
+        function showNewProjectModal() {
+            document.getElementById('newProjectModal').classList.remove('hidden');
+        }
+
+        function hideNewProjectModal() {
+            document.getElementById('newProjectModal').classList.add('hidden');
+        }
+
+        // إغلاق النموذج بـ Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') hideNewProjectModal();
+        });
+    </script>
 </body>
-</html>
+</html>'''
+
+with open('/mnt/agents/output/dashboard.html', 'w', encoding='utf-8') as f:
+    f.write(dashboard_html)
+
