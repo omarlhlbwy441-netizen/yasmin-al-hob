@@ -13,8 +13,13 @@ export default defineConfig({
       },
     },
   },
+  preview: {
+    allowedHosts: [
+      'yasmin-al-hob-production.up.railway.app'
+    ],
+  },
   build: {
     outDir: 'dist',
     sourcemap: true,
-  },
+  }
 })
