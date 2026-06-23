@@ -1,101 +1,44 @@
-# 🌸 Yasmin AI Builder
+# 🌸 ياسمين دارك تكنولوجي (Yasmin Dark Tech)
 
-**Build apps, websites, games, and systems with parallel AI agents.**
+منصة بناء المشاريع البرمجية بالذكاء الاصطناعي - 500+ وكيل برمجي متوازي
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Node 20+](https://img.shields.io/badge/node-20+-green.svg)](https://nodejs.org/)
-[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
+## 🎨 التصميم
+- **الألوان**: أخضر غامق (Emerald 900) + فضي معدني
+- **الواجهات**: زجاجية (Glassmorphism) بخلفيات رخامية
+- **الأزرار**: كريستالية عائمة (Floating Crystal)
+- **الشعار**: وحش هيكل عظمي (Dark Tech Skeleton)
 
-## 🚀 Features
-
-- 🤖 **Parallel AI Agents** — Frontend, Backend, DevOps, Designer, QA agents working together
-- 🌐 **12 Languages** — Full i18n with RTL support (Arabic, Persian, Urdu)
-- 📱 **PWA** — Install as app, works offline with background sync
-- 💬 **Realtime Chat** — Socket.io chat between agents and users
-- 🔔 **Push Notifications** — FCM v1 + OneSignal + Web Push
-- 📧 **Email Service** — SendGrid + Resend + SMTP with failover
-- 🔍 **Elasticsearch** — Full-text search across all data
-- 🔐 **Enterprise Security** — SSO, RBAC, Rate Limiting, CSP, Encryption at rest
-- 🤖 **ChatGPT Plugin** — Official OpenAI plugin integration
-- 📊 **Analytics Dashboard** — Real-time metrics with Grafana
-- 🐳 **Docker Ready** — One command to run everything
-
-## 📁 Project Structure
-
+## 🏗️ الهيكل
 ```
-yasmin/
-├── backend/          # FastAPI + Python services
-├── frontend/         # React PWA
-├── docker/           # Docker Compose + configs
-├── docs/             # Documentation
-└── README.md
+yasmin-dark-tech/
+├── apps/
+│   ├── api/          # FastAPI Backend + 7 Agents
+│   └── web/          # Next.js Frontend
+├── docker/           # Docker configs
+└── scripts/          # Setup scripts
 ```
 
-## 🛠️ Quick Start
-
-### Prerequisites
-- Docker & Docker Compose
-- Or: Python 3.11+, Node 20+, Redis, PostgreSQL
-
-### With Docker (Recommended)
-
+## 🚀 التشغيل
 ```bash
-# 1. Clone
-git clone https://github.com/yourusername/yasmin.git
-cd yasmin
+# Docker (موصى)
+docker-compose up --build
 
-# 2. Configure
-cp docker/.env.example docker/.env
-# Edit docker/.env with your API keys
-
-# 3. Run everything
-docker-compose -f docker/docker-compose.yml up -d
-
-# 4. Access
-# Frontend:  http://localhost:3000
-# API Docs:  http://localhost:8000/docs
-# Grafana:   http://localhost:3001
-# Prometheus: http://localhost:9090
+# أو محلياً
+cd apps/api && uvicorn main:app --reload
+cd apps/web && npm run dev
 ```
 
-### Without Docker
+## 📄 API
+| Endpoint | الوصف |
+|----------|-------|
+| `/api/health` | فحص الحالة |
+| `/api/auth/*` | المصادقة |
+| `/api/projects/*` | المشاريع |
+| `/api/agents/*` | الوكلاء |
+| `/ws` | WebSocket |
 
+## 🐳 Docker
 ```bash
-# Backend
-cd backend
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-
-# Frontend
-cd frontend
-npm install
-npm start
+docker build -f docker/Dockerfile.api -t yasmin-api .
+docker build -f docker/Dockerfile.web -t yasmin-web .
 ```
-
-## 🌍 Supported Languages
-
-| Language | Code | RTL |
-|----------|------|-----|
-| العربية | ar | ✅ |
-| English | en | ❌ |
-| Français | fr | ❌ |
-| Español | es | ❌ |
-| Deutsch | de | ❌ |
-| Türkçe | tr | ❌ |
-| فارسی | fa | ✅ |
-| اردو | ur | ✅ |
-| 中文 | zh | ❌ |
-| 日本語 | ja | ❌ |
-| 한국어 | ko | ❌ |
-| Русский | ru | ❌ |
-
-## 🤝 Contributing
-
-We welcome contributions! Please read our [Contributing Guide](docs/CONTRIBUTING.md).
-
-## 📄 License
-
-MIT License — see [LICENSE](LICENSE) file.
-
-## 💜 Built with love by the Yasmin team

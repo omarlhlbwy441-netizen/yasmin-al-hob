@@ -1,0 +1,66 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-marble text-white;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    ::selection {
+        @apply bg-yasmin-500/30 text-white;
+    }
+}
+
+@layer components {
+    .glass {
+        @apply bg-crystal backdrop-blur-xl border border-white/10;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.1);
+    }
+    .glass-strong {
+        @apply bg-crystal-dark backdrop-blur-2xl border border-white/20;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.15);
+    }
+    .crystal-btn {
+        @apply relative px-8 py-4 bg-gradient-to-r from-yasmin-600 to-yasmin-800 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4), 0 0 30px rgba(16, 185, 129, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .crystal-btn:hover {
+        @apply from-yasmin-500 to-yasmin-700;
+        box-shadow: 0 6px 25px rgba(16, 185, 129, 0.6), 0 0 50px rgba(16, 185, 129, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+    .silver-btn {
+        @apply relative px-8 py-4 bg-gradient-to-r from-silver-700 to-silver-900 rounded-2xl font-bold text-white overflow-hidden transition-all duration-300;
+        box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4), 0 0 30px rgba(108, 117, 125, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    .silver-btn:hover {
+        @apply from-silver-600 to-silver-800;
+        box-shadow: 0 6px 25px rgba(108, 117, 125, 0.6), 0 0 50px rgba(108, 117, 125, 0.3);
+        transform: translateY(-2px);
+    }
+    .glass-card {
+        @apply glass rounded-3xl p-8;
+    }
+    .glass-input {
+        @apply w-full px-6 py-4 bg-crystal-dark backdrop-blur-lg border border-white/20 rounded-2xl text-white placeholder-white/40 focus:outline-none focus:border-yasmin-400 focus:ring-2 focus:ring-yasmin-400/20 transition-all duration-300;
+    }
+    .sidebar {
+        @apply glass-strong w-72 h-screen fixed right-0 top-0 z-50 p-6;
+    }
+    .yasmin-text {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-yasmin-300 via-yasmin-400 to-yasmin-500;
+    }
+    .silver-text {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-silver-300 via-white to-silver-400;
+    }
+}
+
+@layer utilities {
+    .text-shadow-glow {
+        text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+    }
+    .text-shadow-silver {
+        text-shadow: 0 0 20px rgba(173, 181, 189, 0.5);
+    }
+}
